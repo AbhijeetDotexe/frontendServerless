@@ -8,41 +8,41 @@ import { useAuth } from '@/context/AuthContext';
 import { 
   Save, Settings, Tag, Globe, Lock, 
   ChevronDown, CheckCircle, AlertCircle, 
-  Code, Loader, Play, Terminal, Clock, ExternalLink, Copy
+  Code, Loader, Play, Terminal, Clock, ExternalLink, Copy, AlertTriangle
 } from 'lucide-react';
 
-// --- 1. CONFIGURATION: Updated Runtime Strings ---
+// --- 1. CONFIGURATION: Updated Boilerplates ---
 const LANGUAGES = {
   nodejs: { 
     label: 'Node.js 18', 
     monacoLanguage: 'javascript', 
-    backendRuntime: 'nodejs:18', // <--- FIXED: Matches backend requirement
-    boilerplate: `function main(params) {\n  const name = params.name || 'World';\n  return { payload: "Hello " + name + "!" };\n}` 
+    backendRuntime: 'nodejs:18',
+    boilerplate: `function main(params) {\n  const name = params.name || 'stranger';\n  console.log("Log: Processing for " + name);\n  return { body: "Hello " + name + "!" };\n}` 
   },
   python: { 
     label: 'Python 3.11', 
     monacoLanguage: 'python', 
-    backendRuntime: 'python:3.11', // <--- FIXED
-    boilerplate: `def main(args):\n    name = args.get("name", "World")\n    return { "payload": f"Hello {name}!" }` 
+    backendRuntime: 'python:3.11',
+    boilerplate: `def main(args):\n    # 1. Parse Input\n    name = args.get("name", "stranger")\n    \n    # 2. Do Logic\n    greeting = "Hello " + name + "!"\n    print(f"Processing request for: {name}")\n    \n    # 3. Return Dict\n    return {"body": greeting}` 
   },
   go: { 
     label: 'Go 1.20', 
     monacoLanguage: 'go', 
-    backendRuntime: 'go:1.20', // <--- FIXED
-    boilerplate: `package main\nimport "fmt"\nfunc Main(args map[string]interface{}) map[string]interface{} {\n  return map[string]interface{}{"payload": "Hello World"}\n}` 
+    backendRuntime: 'go:1.20',
+    boilerplate: `package main\n\nimport "fmt"\n\n// Exported function (Capitalized)\nfunc Main(args map[string]interface{}) map[string]interface{} {\n    // 1. Type Assertion\n    name, ok := args["name"].(string)\n    if !ok {\n        name = "stranger"\n    }\n    \n    // 2. Logic\n    fmt.Println("Log: Processing request...")\n    \n    // 3. Return Map\n    msg := make(map[string]interface{})\n    msg["body"] = "Hello, " + name + "!"\n    return msg\n}` 
   },
-  swift: { 
-    label: 'Swift 5.7', 
-    monacoLanguage: 'swift', 
-    backendRuntime: 'swift:5.7', // <--- FIXED
-    boilerplate: `func main(args: [String:Any]) -> [String:Any] {\n    return [ "payload" : "Hello World!" ]\n}` 
-  },
-  php: { 
-    label: 'PHP 8.1', 
-    monacoLanguage: 'php', 
-    backendRuntime: 'php:8.1', // <--- FIXED
-    boilerplate: `<?php\nfunction main(array $args) : array {\n    return ["payload" => "Hello World!"];\n}` 
-  }
+  // swift: { 
+  //   label: 'Swift 5.7', 
+  //   monacoLanguage: 'swift', 
+  //   backendRuntime: 'swift:5.7',
+  //   boilerplate: `func main(args: [String:Any]) -> [String:Any] {\n    // 1. Parse Input safely\n    if let name = args["name"] as? String {\n        let greeting = "Hello \\(name)!"\n        print("Log: Processing for \\(name)")\n        return [ "body" : greeting ]\n    } else {\n        return [ "body" : "Hello stranger!" ]\n    }\n}` 
+  // },
+  // php: { 
+  //   label: 'PHP 8.1', 
+  //   monacoLanguage: 'php', 
+  //   backendRuntime: 'php:8.1',
+  //   boilerplate: `<?php\nfunction main(array $args) : array {\n    // 1. Null Coalescing for default\n    $name = $args["name"] ?? "stranger";\n    \n    // 2. Logic\n    $greeting = "Hello $name!";\n    \n    // 3. Stdout is captured as logs\n    echo "Log: Processing for $name";\n    \n    return ["body" => $greeting];\n}` 
+  // }
 };
 
 type LanguageKey = keyof typeof LANGUAGES;
@@ -54,7 +54,7 @@ function EditorContent() {
   const functionId = searchParams.get('id');
 
   // --- Form State ---
-  const [name, setName] = useState('Untitled Function');
+  const [name, setName] = useState(`Untitled Function - ${Date.now()}`);
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
@@ -65,6 +65,10 @@ function EditorContent() {
   // --- Editor State ---
   const [selectedLang, setSelectedLang] = useState<LanguageKey>('nodejs');
   const [code, setCode] = useState(LANGUAGES['nodejs'].boilerplate);
+  
+  // --- Language Switch Modal State ---
+  const [showLangModal, setShowLangModal] = useState(false);
+  const [pendingLang, setPendingLang] = useState<LanguageKey | null>(null);
   
   // --- Loading States ---
   const [isSaving, setIsSaving] = useState(false);
@@ -93,7 +97,7 @@ function EditorContent() {
         setIsFetching(true);
         try {
           const token = localStorage.getItem('authToken');
-          const res = await fetch(`http://localhost:3002/api/functions/${functionId}`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/functions/${functionId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const data = await res.json();
@@ -103,8 +107,6 @@ function EditorContent() {
             setDescription(func.description || '');
             setCode(func.code);
             
-            // Map the backend runtime string back to our internal key if possible
-            // OR just default to nodejs if not found
             const foundKey = Object.keys(LANGUAGES).find(key => 
               LANGUAGES[key as LanguageKey].backendRuntime === func.runtime
             );
@@ -132,6 +134,21 @@ function EditorContent() {
     setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4000);
   };
 
+  // --- Language Change Handler ---
+  const handleLanguageChangeRequest = (newLang: LanguageKey) => {
+    setPendingLang(newLang);
+    setShowLangModal(true);
+  };
+
+  const confirmLanguageChange = () => {
+    if (pendingLang) {
+      setSelectedLang(pendingLang);
+      setCode(LANGUAGES[pendingLang].boilerplate);
+    }
+    setShowLangModal(false);
+    setPendingLang(null);
+  };
+
   // --- Save / Deploy Logic ---
   const handleSave = async () => {
     setIsSaving(true);
@@ -139,7 +156,7 @@ function EditorContent() {
       name, 
       description, 
       code, 
-      runtime: LANGUAGES[selectedLang].backendRuntime, // <--- FIXED: Send "nodejs:18"
+      runtime: LANGUAGES[selectedLang].backendRuntime,
       tags, 
       isPublic, 
       metadata: { category, complexity }
@@ -147,10 +164,10 @@ function EditorContent() {
 
     try {
       const token = localStorage.getItem('authToken');
-      let url = 'http://localhost:3002/api/functions';
+      let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/functions`;
       let method = 'POST';
       if (functionId) {
-        url = `http://localhost:3002/api/functions/${functionId}`;
+        url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/functions/${functionId}`;
         method = 'PUT'; 
       }
       const response = await fetch(url, {
@@ -190,7 +207,7 @@ function EditorContent() {
       const token = localStorage.getItem('authToken');
       const testPayload = { name: "Abhijeet" };
 
-      const response = await fetch(`http://localhost:3002/api/execute/${functionId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/execute/${functionId}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json', 
@@ -238,9 +255,38 @@ function EditorContent() {
   }
 
   return (
-    // FIXED: Main container is strictly h-screen and hidden overflow to prevent window scrolling
     <div className="flex-1 flex pt-16 h-screen w-screen overflow-hidden relative">
       
+      {/* --- Language Confirmation Modal --- */}
+      {showLangModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowLangModal(false)}></div>
+          <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-amber-400 mb-4">
+              <AlertTriangle size={24} />
+              <h3 className="text-lg font-bold text-white">Change Language?</h3>
+            </div>
+            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+              Changing the language will reset the editor with the new boilerplate. Any unsaved code changes will be <span className="text-red-400 font-bold">lost</span>.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowLangModal(false)}
+                className="flex-1 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmLanguageChange}
+                className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Toast */}
       <div className={`fixed bottom-6 right-6 z-[100] transition-all duration-500 transform ${toast.show ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
         <div className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border backdrop-blur-md ${toast.type === 'success' ? 'bg-slate-900/90 border-green-500/30 text-green-400' : 'bg-slate-900/90 border-red-500/30 text-red-400'}`}>
@@ -250,7 +296,7 @@ function EditorContent() {
       </div>
 
       {/* --- Sidebar (Left) --- */}
-      <aside className="w-80 bg-slate-950 border-r border-slate-800 flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 shrink-0">
+      <aside className="w-80 bg-slate-950 border-r border-slate-800 flex flex-col overflow-y-auto shrink-0">
         <div className="p-6 space-y-8">
            <div className="flex items-center gap-2 text-indigo-400">
             <Settings size={18} />
@@ -289,7 +335,6 @@ function EditorContent() {
       </aside>
 
       {/* --- Main Content (Right) --- */}
-      {/* FIXED: Added 'min-w-0' to prevent flex item overflow and ensure correct resizing */}
       <div className="flex-1 flex flex-col bg-[#1e1e1e] min-w-0 overflow-hidden">
         
         {/* Editor Toolbar */}
@@ -297,7 +342,11 @@ function EditorContent() {
            <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 bg-[#2d2d2d] border border-[#444] rounded px-3 py-1">
                 <Code size={14} className="text-indigo-400" />
-                <select value={selectedLang} onChange={(e) => setSelectedLang(e.target.value as LanguageKey)} className="bg-transparent text-slate-300 text-xs font-medium focus:outline-none cursor-pointer">
+                <select 
+                  value={selectedLang} 
+                  onChange={(e) => handleLanguageChangeRequest(e.target.value as LanguageKey)} 
+                  className="bg-transparent text-slate-300 text-xs font-medium focus:outline-none cursor-pointer"
+                >
                   {Object.entries(LANGUAGES).map(([key, lang]) => (
                     <option key={key} value={key} className="bg-[#2d2d2d]">{lang.label}</option>
                   ))}
@@ -320,7 +369,6 @@ function EditorContent() {
         </div>
 
         {/* Monaco Editor */}
-        {/* FIXED: 'flex-1' will now properly fill the remaining height above the console */}
         <div className="flex-1 relative min-h-0">
             <Editor
               height="100%"
@@ -333,12 +381,10 @@ function EditorContent() {
         </div>
 
         {/* --- Output Panel --- */}
-        {/* FIXED: Height transition is now handled by styles, and shrink-0 prevents it from pushing layout */}
         <div 
           className="border-t border-[#333] bg-[#161821] flex flex-col transition-all duration-300 ease-in-out shrink-0"
           style={{ height: showOutput ? '320px' : '40px' }} 
         >
-           {/* Output Header */}
            <div 
              className="flex items-center justify-between px-4 h-10 bg-[#1e1e1e] cursor-pointer hover:bg-[#252525] select-none border-b border-[#333] shrink-0"
              onClick={() => setShowOutput(!showOutput)}
@@ -350,7 +396,6 @@ function EditorContent() {
               <ChevronDown size={16} className={`text-slate-500 transition-transform duration-300 ${showOutput ? '' : 'rotate-180'}`} />
            </div>
 
-           {/* Output Content */}
            <div className={`flex-1 overflow-auto p-4 font-mono text-sm ${showOutput ? 'opacity-100' : 'opacity-0'}`}>
               
               {!executionResult && !isExecuting && (
@@ -369,8 +414,6 @@ function EditorContent() {
 
               {executionResult && (
                 <div className="animate-in fade-in slide-in-from-bottom-2 space-y-4">
-                  
-                  {/* Status Bar */}
                   <div className="flex items-center gap-4 text-xs border-b border-slate-800 pb-3">
                      <span className={`px-2 py-0.5 rounded font-bold ${executionMeta?.status === 'success' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
                        {executionMeta?.status === 'success' ? '200 OK' : 'Error'}
@@ -380,7 +423,6 @@ function EditorContent() {
                      </span>
                   </div>
 
-                  {/* URL Display Section */}
                   {executionMeta?.webUrl && (
                     <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3">
                        <p className="text-xs text-slate-500 mb-1 flex items-center gap-1">
@@ -406,7 +448,6 @@ function EditorContent() {
                     </div>
                   )}
 
-                  {/* JSON Output */}
                   <div>
                     <p className="text-xs text-slate-500 mb-1">Response Body:</p>
                     <pre className="text-green-400 whitespace-pre-wrap break-all bg-slate-950 p-3 rounded-lg border border-slate-800/50">

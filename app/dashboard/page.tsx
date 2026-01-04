@@ -81,7 +81,7 @@ export default function DashboardPage() {
         const params = new URLSearchParams({ page: page.toString(), limit: '9' });
         if (filterStatus !== 'all') params.append('isActive', filterStatus === 'active' ? 'true' : 'false');
 
-        const res = await fetch(`http://localhost:3002/api/functions?${params.toString()}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/functions?${params.toString()}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
         });
@@ -124,7 +124,7 @@ export default function DashboardPage() {
     setIsDeleting(true);
     try {
       const token = localStorage.getItem('authToken');
-      const res = await fetch(`http://localhost:3002/api/functions/${itemToDelete}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_UR}L/api/functions/${itemToDelete}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

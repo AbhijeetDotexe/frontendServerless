@@ -22,8 +22,8 @@ export function AuthForm({ type }: AuthFormProps) {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // Exact endpoints
-  const LOGIN_URL = 'http://localhost:3002/api/auth/login';
-  const SIGNUP_URL = 'http://localhost:3002/api/auth/register';
+  const LOGIN_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`;
+  const SIGNUP_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

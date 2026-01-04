@@ -44,7 +44,7 @@ export default function LandingPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/signup">
+              <Link href="/dashboard">
                 <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-slate-950 px-6 py-3.5 rounded-lg font-bold hover:bg-slate-200 transition-colors">
                   Write Functions Now
                   <ArrowRight size={18} />
