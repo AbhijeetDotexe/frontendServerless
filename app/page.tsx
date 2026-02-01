@@ -168,7 +168,7 @@ export default function LandingPage() {
       {/* --- Footer --- */}
       <footer className="border-t border-slate-800 bg-slate-950 mt-12">
          <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
-            <p>© 2024 ServerlessFlow Inc. All rights reserved.</p>
+            <p>© 2026 ServerlessFlow Inc. All rights reserved.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
                <a href="#" className="hover:text-white">Privacy</a>
                <a href="#" className="hover:text-white">Terms</a>
