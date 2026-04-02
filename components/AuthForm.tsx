@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Lock, User, LogIn, UserPlus } from 'lucide-react';
+import { Mail, Lock, User, LogIn, UserPlus, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
@@ -14,14 +14,13 @@ interface AuthFormProps {
 export function AuthForm({ type }: AuthFormProps) {
   const { login } = useAuth();
   const isLogin = type === 'login';
-  
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Exact endpoints
   const LOGIN_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`;
   const SIGNUP_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`;
 
@@ -31,17 +30,12 @@ export function AuthForm({ type }: AuthFormProps) {
     setLoading(true);
 
     const url = isLogin ? LOGIN_URL : SIGNUP_URL;
-    
-    const body = isLogin 
-      ? { email, password }
-      : { username, email, password };
+    const body = isLogin ? { email, password } : { username, email, password };
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
 
@@ -49,15 +43,10 @@ export function AuthForm({ type }: AuthFormProps) {
 
       if (data.success) {
         setMessage({ type: 'success', text: 'Success! Redirecting...' });
-        
-        // If login is successful, update Global State via Context
-        if (data.token && data.user) {
-          login(data.token, data.user);
-        }
+        if (data.token && data.user) login(data.token, data.user);
       } else {
         setMessage({ type: 'error', text: data.message || 'Action failed.' });
       }
-
     } catch (error) {
       console.error('Auth Error:', error);
       setMessage({ type: 'error', text: 'Server connection failed.' });
@@ -66,83 +55,79 @@ export function AuthForm({ type }: AuthFormProps) {
     }
   };
 
-  const title = isLogin ? 'Welcome Back!' : 'Create Account';
-  const buttonText = isLogin ? 'Log In' : 'Sign Up';
+  const title = isLogin ? 'Welcome back' : 'Create your workspace';
+  const subtitle = isLogin
+    ? 'Log in to edit functions, deploy endpoints, and review runtime output.'
+    : 'Sign up to start building functions, testing payloads, and shipping serverless workflows.';
+  const buttonText = isLogin ? 'Log In' : 'Create Account';
   const Icon = isLogin ? LogIn : UserPlus;
 
-  // --- This is the JSX Return Block that was missing/hidden ---
   return (
-    <div className="bg-slate-900/80 backdrop-blur-sm p-8 sm:p-10 rounded-2xl shadow-2xl border border-indigo-700/50 w-full max-w-sm mx-auto transition-all duration-300 hover:shadow-indigo-500/30">
-      
-      <div className="flex justify-center mb-6">
-         <Link href="/">
-           <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-              <span className="font-bold text-white text-xl">S</span>
-           </div>
-         </Link>
+    <div className="w-full max-w-md rounded-[2rem] border border-[#e7e6df] bg-white p-8 shadow-[0_24px_60px_rgba(20,20,20,0.08)] sm:p-10">
+      <div className="mb-8 flex justify-center">
+        <Link href="/" className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff5a1f] text-white shadow-[0_14px_28px_rgba(255,90,31,0.22)] transition-transform hover:-translate-y-0.5">
+          <Shield size={22} fill="currentColor" />
+        </Link>
       </div>
 
-      <h2 className="text-3xl font-extrabold text-white mb-2 text-center">{title}</h2>
-      <p className="text-sm text-slate-400 mb-8 text-center">
-        {isLogin ? 'Access your workspace.' : 'Join ServerlessFlow today.'}
-      </p>
+      <h2 className="text-center text-3xl font-semibold tracking-[-0.04em] text-[#181817]">{title}</h2>
+      <p className="mt-3 text-center text-sm leading-7 text-[#66665f]">{subtitle}</p>
 
       {message && (
-        <div className={`p-3 rounded-lg text-sm mb-5 ${message.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/30' : 'bg-red-500/10 text-red-400 border border-red-500/30'}`}>
+        <div className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${message.type === 'success' ? 'border-[#cdecd9] bg-[#eef8f1] text-[#2e8a57]' : 'border-[#f1d0cb] bg-[#fff2f0] text-[#bf4b3d]'}`}>
           {message.text}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         {!isLogin && (
-          <InputField 
+          <InputField
             Icon={User}
             type="text"
             placeholder="Username"
             value={username}
-            onChange={(e: any) => setUsername(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
             required
           />
         )}
 
-        <InputField 
+        <InputField
           Icon={Mail}
           type="email"
           placeholder="Email Address"
           value={email}
-          onChange={(e: any) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           required
         />
 
-        <InputField 
+        <InputField
           Icon={Lock}
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e: any) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           required
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 py-3 mt-6 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/40"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-[#4f59d9] py-3.5 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(79,89,217,0.18)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : (
             <>
-              <Icon size={20} />
+              <Icon size={18} />
               {buttonText}
             </>
           )}
         </button>
       </form>
-      
-      <div className="mt-8 text-center text-sm text-slate-500">
-        {isLogin ? "Don't have an account? " : "Already have an account? "}
-        <Link href={isLogin ? '/signup' : '/login'} className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+
+      <div className="mt-8 text-center text-sm text-[#6a6a63]">
+        {isLogin ? "Don't have an account? " : 'Already have an account? '}
+        <Link href={isLogin ? '/signup' : '/login'} className="font-semibold text-[#3d49d8] hover:text-[#2f3dc9]">
           {isLogin ? 'Sign Up' : 'Log In'}
         </Link>
       </div>
@@ -150,17 +135,32 @@ export function AuthForm({ type }: AuthFormProps) {
   );
 }
 
-// Reusable Input Component
-const InputField = ({ Icon, type, placeholder, value, onChange, required }: any) => (
-  <div className="relative">
-    <Icon size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400" />
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      required={required}
-      className="w-full bg-slate-800 text-white placeholder-slate-500 pl-11 pr-4 py-3 border border-slate-700 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-    />
-  </div>
-);
+function InputField({
+  Icon,
+  type,
+  placeholder,
+  value,
+  onChange,
+  required,
+}: {
+  Icon: React.ComponentType<{ size?: number; className?: string }>;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+}) {
+  return (
+    <div className="relative">
+      <Icon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a8a83]" />
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full rounded-2xl border border-[#e2e1da] bg-[#fbfbf8] py-3.5 pl-12 pr-4 text-[#181817] placeholder:text-[#8c8c85] focus:border-[#4f59d9] focus:outline-none focus:ring-2 focus:ring-[#d9dcff]"
+      />
+    </div>
+  );
+}

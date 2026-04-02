@@ -1,6 +1,17 @@
-// app/layout.tsx
 import './globals.css';
-import { AuthProvider } from '@/context/AuthContext'; // <--- Make sure this import path is correct
+import { AuthProvider } from '@/context/AuthContext';
+import { Cormorant_Garamond, Manrope } from 'next/font/google';
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ['latin'],
+  variable: '--font-cormorant-garamond',
+  weight: ['500', '600', '700'],
+});
 
 export const metadata = {
   title: 'ServerlessFlow',
@@ -10,15 +21,12 @@ export const metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body>
-        {/* Wrap everything inside AuthProvider */}
-        <AuthProvider>
-           {children}
-        </AuthProvider>
+      <body className={`${manrope.variable} ${cormorantGaramond.variable} antialiased`}>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

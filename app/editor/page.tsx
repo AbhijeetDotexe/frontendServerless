@@ -251,34 +251,34 @@ function EditorContent() {
   const removeTag = (t: string) => setTags(tags.filter(tag => tag !== t));
 
   if (authLoading || isFetching) {
-    return <div className="flex items-center justify-center h-screen bg-[#0F1117] text-slate-400"><Loader className="animate-spin mr-2" /> Loading...</div>;
+    return <div className="flex h-screen items-center justify-center bg-[#f5f5f2] text-[#66665f]"><Loader className="animate-spin mr-2" /> Loading...</div>;
   }
 
   return (
-    <div className="flex-1 flex pt-16 h-screen w-screen overflow-hidden relative">
+    <div className="relative flex h-screen w-screen flex-1 overflow-hidden pt-16 bg-[#f5f5f2] text-[#171717]">
       
       {/* --- Language Confirmation Modal --- */}
       {showLangModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowLangModal(false)}></div>
-          <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3 text-amber-400 mb-4">
+          <div className="absolute inset-0 bg-[rgba(246,240,227,0.72)] backdrop-blur-sm" onClick={() => setShowLangModal(false)}></div>
+          <div className="relative w-full max-w-sm rounded-[1.75rem] border border-[#e7e7e0] bg-white p-6 shadow-[0_24px_60px_rgba(20,20,20,0.08)] animate-in zoom-in-95 duration-200">
+            <div className="mb-4 flex items-center gap-3 text-[#b77908]">
               <AlertTriangle size={24} />
-              <h3 className="text-lg font-bold text-white">Change Language?</h3>
+              <h3 className="font-[family:var(--font-display)] text-lg font-semibold tracking-[-0.02em] text-[#241d16]">Change Language?</h3>
             </div>
-            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-              Changing the language will reset the editor with the new boilerplate. Any unsaved code changes will be <span className="text-red-400 font-bold">lost</span>.
+            <p className="mb-6 text-sm leading-7 text-[#65594b]">
+              Changing the language will reset the editor with the new boilerplate. Any unsaved code changes will be <span className="font-semibold text-[#b85c38]">lost</span>.
             </p>
             <div className="flex gap-3">
               <button 
                 onClick={() => setShowLangModal(false)}
-                className="flex-1 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
+                className="flex-1 rounded-lg border border-[#dbc9ab] bg-white/80 px-4 py-2 text-sm font-medium text-[#4d4235] transition-colors hover:border-[#d4a11e] hover:bg-[#fff6df]"
               >
                 Cancel
               </button>
               <button 
                 onClick={confirmLanguageChange}
-                className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition-colors"
+                className="flex-1 rounded-lg bg-[#4f59d9] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#444fd0]"
               >
                 Confirm
               </button>
@@ -289,66 +289,66 @@ function EditorContent() {
 
       {/* Toast */}
       <div className={`fixed bottom-6 right-6 z-[100] transition-all duration-500 transform ${toast.show ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
-        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border backdrop-blur-md ${toast.type === 'success' ? 'bg-slate-900/90 border-green-500/30 text-green-400' : 'bg-slate-900/90 border-red-500/30 text-red-400'}`}>
+        <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 shadow-[0_18px_45px_rgba(34,28,21,0.14)] backdrop-blur-md ${toast.type === 'success' ? 'border-[#bfd5c4] bg-white/92 text-[#2f7a5a]' : 'border-[#efcf95] bg-white/92 text-[#b85c38]'}` }>
           {toast.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
-          <span className="text-sm font-bold text-white">{toast.message}</span>
+          <span className="text-sm font-semibold text-[#241d16]">{toast.message}</span>
         </div>
       </div>
 
       {/* --- Sidebar (Left) --- */}
-      <aside className="w-80 bg-slate-950 border-r border-slate-800 flex flex-col overflow-y-auto shrink-0">
+      <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-[#e6e6df] bg-white shadow-[inset_-1px_0_0_rgba(231,231,224,0.9)] backdrop-blur-sm">
         <div className="p-6 space-y-8">
-           <div className="flex items-center gap-2 text-indigo-400">
+           <div className="flex items-center gap-2 text-[#9f7b26]">
             <Settings size={18} />
-            <span className="text-xs font-bold uppercase tracking-wider">Configuration</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.22em]">Configuration</span>
           </div>
           
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-slate-500 mb-1">Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-sm text-white focus:border-indigo-500 outline-none" />
+              <label className="mb-1 block text-xs text-[#8b7d6e]">Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-xl border border-[#dbc9ab] bg-[#fffdfa] p-3 text-sm text-[#221c15] outline-none transition-colors focus:border-[#d4a11e]" />
             </div>
             <div>
-              <label className="block text-xs text-slate-500 mb-1">Description</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-sm text-white outline-none resize-none" />
+              <label className="mb-1 block text-xs text-[#8b7d6e]">Description</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full resize-none rounded-xl border border-[#dbc9ab] bg-[#fffdfa] p-3 text-sm text-[#221c15] outline-none transition-colors focus:border-[#d4a11e]" />
             </div>
           </div>
-          <div className="h-px bg-slate-800"></div>
+          <div className="h-px bg-[#eadfcb]"></div>
           <div>
-              <label className="block text-xs text-slate-500 mb-2">Tags</label>
-              <div className="bg-slate-900 border border-slate-800 rounded-lg p-2 flex flex-wrap gap-2">
+              <label className="mb-2 block text-xs text-[#8b7d6e]">Tags</label>
+              <div className="flex flex-wrap gap-2 rounded-xl border border-[#dbc9ab] bg-[#fffdfa] p-2">
                 {tags.map(tag => (
-                  <span key={tag} className="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-1 rounded flex items-center gap-1">
+                  <span key={tag} className="flex items-center gap-1 rounded-full border border-[#ffd7c7] bg-[#fff1ea] px-2.5 py-1 text-xs text-[#bf5a2b]">
                     {tag} <button onClick={() => removeTag(tag)}>×</button>
                   </span>
                 ))}
-                <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleAddTag} placeholder="Add tag..." className="bg-transparent outline-none text-xs flex-1 min-w-[60px]" />
+                <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleAddTag} placeholder="Add tag..." className="min-w-[60px] flex-1 bg-transparent text-xs text-[#221c15] outline-none placeholder:text-[#8b7d6e]" />
               </div>
           </div>
         </div>
 
-        <div className="mt-auto p-4 border-t border-slate-800 bg-slate-900/50 flex flex-col gap-3">
-            <button onClick={handleSave} disabled={isSaving} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 text-sm transition-all shadow-lg shadow-indigo-500/20">
+        <div className="mt-auto flex flex-col gap-3 border-t border-[#ddcfb3] bg-[#eadfc9]/88 p-4">
+            <button onClick={handleSave} disabled={isSaving} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4f59d9] py-2.5 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(79,89,217,0.18)] transition-all hover:bg-[#444fd0] disabled:opacity-50">
               {isSaving ? <Loader className="animate-spin" size={16} /> : <><Save size={16} /> {functionId ? 'Update' : 'Deploy'}</>}
             </button>
         </div>
       </aside>
 
       {/* --- Main Content (Right) --- */}
-      <div className="flex-1 flex flex-col bg-[#1e1e1e] min-w-0 overflow-hidden">
+      <div className="min-w-0 flex-1 flex flex-col overflow-hidden bg-white backdrop-blur-sm">
         
         {/* Editor Toolbar */}
-        <div className="h-12 bg-[#1e1e1e] border-b border-[#333] flex items-center justify-between px-4 shrink-0">
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-[#e7e7e0] bg-[#f7f7f4] px-4">
            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-[#2d2d2d] border border-[#444] rounded px-3 py-1">
-                <Code size={14} className="text-indigo-400" />
+              <div className="flex items-center gap-2 rounded-lg border border-[#dbc9ab] bg-white/80 px-3 py-1">
+                <Code size={14} className="text-[#9f7b26]" />
                 <select 
                   value={selectedLang} 
                   onChange={(e) => handleLanguageChangeRequest(e.target.value as LanguageKey)} 
-                  className="bg-transparent text-slate-300 text-xs font-medium focus:outline-none cursor-pointer"
+                  className="cursor-pointer bg-transparent text-xs font-medium text-[#4d4235] focus:outline-none"
                 >
                   {Object.entries(LANGUAGES).map(([key, lang]) => (
-                    <option key={key} value={key} className="bg-[#2d2d2d]">{lang.label}</option>
+                    <option key={key} value={key} className="bg-[#fffdfa] text-[#221c15]">{lang.label}</option>
                   ))}
                 </select>
               </div>
@@ -357,10 +357,10 @@ function EditorContent() {
            <button 
              onClick={handleExecute}
              disabled={isExecuting || !functionId}
-             className={`flex items-center gap-2 px-4 py-1.5 rounded text-xs font-bold transition-all ${
+             className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
                !functionId 
-                ? 'bg-[#2d2d2d] text-slate-500 cursor-not-allowed' 
-                : 'bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-900/20'
+                ? 'cursor-not-allowed bg-[#f7f0df] text-[#a39480]'
+                : 'bg-[#4f59d9] text-white shadow-[0_12px_28px_rgba(79,89,217,0.16)] hover:bg-[#444fd0]'
              }`}
            >
              {isExecuting ? <Loader className="animate-spin" size={14} /> : <Play size={14} fill="currentColor" />}
@@ -373,7 +373,7 @@ function EditorContent() {
             <Editor
               height="100%"
               language={LANGUAGES[selectedLang].monacoLanguage}
-              theme="vs-dark"
+              theme="vs"
               value={code}
               onChange={(value) => setCode(value || '')}
               options={{ minimap: { enabled: false }, fontSize: 14, automaticLayout: true }}
@@ -382,50 +382,50 @@ function EditorContent() {
 
         {/* --- Output Panel --- */}
         <div 
-          className="border-t border-[#333] bg-[#161821] flex flex-col transition-all duration-300 ease-in-out shrink-0"
+          className="shrink-0 flex flex-col border-t border-[#e7e7e0] bg-white transition-all duration-300 ease-in-out"
           style={{ height: showOutput ? '320px' : '40px' }} 
         >
            <div 
-             className="flex items-center justify-between px-4 h-10 bg-[#1e1e1e] cursor-pointer hover:bg-[#252525] select-none border-b border-[#333] shrink-0"
+             className="flex h-10 shrink-0 cursor-pointer select-none items-center justify-between border-b border-[#e7e7e0] bg-[#f7f7f4] px-4 hover:bg-[#f2f2ee]"
              onClick={() => setShowOutput(!showOutput)}
            >
-              <div className="flex items-center gap-2 text-slate-400">
+              <div className="flex items-center gap-2 text-[#65594b]">
                 <Terminal size={14} />
-                <span className="text-xs font-mono font-bold uppercase">Console / Output</span>
+                <span className="text-xs font-mono font-semibold uppercase tracking-[0.18em]">Console / Output</span>
               </div>
-              <ChevronDown size={16} className={`text-slate-500 transition-transform duration-300 ${showOutput ? '' : 'rotate-180'}`} />
+              <ChevronDown size={16} className={`text-[#8b7d6e] transition-transform duration-300 ${showOutput ? "" : "rotate-180"}`} />
            </div>
 
            <div className={`flex-1 overflow-auto p-4 font-mono text-sm ${showOutput ? 'opacity-100' : 'opacity-0'}`}>
               
               {!executionResult && !isExecuting && (
-                <div className="h-full flex flex-col items-center justify-center text-slate-600">
+                <div className="flex h-full flex-col items-center justify-center text-[#8b7d6e]">
                   <Play size={24} className="mb-2 opacity-50" />
                   <p>Click "Test Run" to execute your function.</p>
                 </div>
               )}
 
               {isExecuting && (
-                <div className="h-full flex items-center justify-center text-slate-500 gap-2">
-                  <Loader className="animate-spin text-indigo-500" size={20} />
+                <div className="flex h-full items-center justify-center gap-2 text-[#8b7d6e]">
+                  <Loader className="animate-spin text-[#9f7b26]" size={20} />
                   <span>Executing function...</span>
                 </div>
               )}
 
               {executionResult && (
                 <div className="animate-in fade-in slide-in-from-bottom-2 space-y-4">
-                  <div className="flex items-center gap-4 text-xs border-b border-slate-800 pb-3">
-                     <span className={`px-2 py-0.5 rounded font-bold ${executionMeta?.status === 'success' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                  <div className="flex items-center gap-4 border-b border-[#eadfcb] pb-3 text-xs">
+                     <span className={`rounded px-2 py-0.5 font-bold ${executionMeta?.status === 'success' ? 'bg-[#edf7f1] text-[#2f7a5a]' : 'bg-[#fff1e8] text-[#b85c38]'}` }>
                        {executionMeta?.status === 'success' ? '200 OK' : 'Error'}
                      </span>
-                     <span className="flex items-center gap-1 text-slate-500">
+                     <span className="flex items-center gap-1 text-[#8b7d6e]">
                        <Clock size={12} /> {executionMeta?.duration || '0ms'}
                      </span>
                   </div>
 
                   {executionMeta?.webUrl && (
-                    <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3">
-                       <p className="text-xs text-slate-500 mb-1 flex items-center gap-1">
+                    <div className="rounded-lg border border-[#e7e7e0] bg-[#fbfbf8] p-3">
+                       <p className="mb-1 flex items-center gap-1 text-xs text-[#8b7d6e]">
                          <Globe size={12} /> Web Endpoint
                        </p>
                        <div className="flex items-center justify-between gap-2">
@@ -433,13 +433,13 @@ function EditorContent() {
                            href={executionMeta.webUrl} 
                            target="_blank" 
                            rel="noopener noreferrer"
-                           className="text-indigo-400 text-xs hover:underline truncate flex-1 flex items-center gap-1"
+                           className="flex flex-1 items-center gap-1 truncate text-xs text-[#7f6118] hover:underline"
                          >
                            {executionMeta.webUrl} <ExternalLink size={10} />
                          </a>
                          <button 
                            onClick={() => copyToClipboard(executionMeta.webUrl)}
-                           className="text-slate-500 hover:text-white transition-colors"
+                           className="text-[#8b7d6e] transition-colors hover:text-[#221c15]"
                            title="Copy URL"
                          >
                            <Copy size={14} />
@@ -449,8 +449,8 @@ function EditorContent() {
                   )}
 
                   <div>
-                    <p className="text-xs text-slate-500 mb-1">Response Body:</p>
-                    <pre className="text-green-400 whitespace-pre-wrap break-all bg-slate-950 p-3 rounded-lg border border-slate-800/50">
+                    <p className="mb-1 text-xs text-[#8b7d6e]">Response Body:</p>
+                    <pre className="whitespace-pre-wrap break-all rounded-lg border border-[#e7e7e0] bg-[#fbfbf8] p-3 text-[#2f7a5a]">
                       {JSON.stringify(executionResult, null, 2)}
                     </pre>
                   </div>
@@ -465,9 +465,9 @@ function EditorContent() {
 
 export default function EditorPage() {
   return (
-    <div className="min-h-screen bg-[#0F1117] text-slate-200 flex flex-col font-sans relative">
+    <div className="relative flex min-h-screen flex-col bg-[#f5f5f2] text-[#171717]">
       <Navbar />
-      <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+      <Suspense fallback={<div className="p-10 text-[#221c15]">Loading...</div>}>
         <EditorContent />
       </Suspense>
     </div>
