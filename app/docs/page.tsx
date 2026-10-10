@@ -5,7 +5,6 @@ import { Navbar } from '@/components/Navbar';
 import {
   Book,
   Code,
-  Terminal,
   Zap,
   Shield,
   Activity,
@@ -14,7 +13,6 @@ import {
   Copy,
   Check,
   Info,
-  AlertTriangle,
 } from 'lucide-react';
 
 export default function DocsPage() {
@@ -30,12 +28,13 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#f5f5f2] text-[#171717] selection:bg-[#d9dcff] selection:text-[#171717]">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors duration-200">
       <Navbar />
 
-      <div className="mx-auto flex max-w-7xl pt-20">
-        <aside className="fixed hidden h-[calc(100vh-5rem)] w-64 overflow-y-auto border-r border-[#e7e7e0] pr-4 pb-10 lg:block">
-          <div className="mt-8 space-y-8">
+      <div className="mx-auto flex max-w-7xl pt-16">
+        {/* Sidebar */}
+        <aside className="fixed hidden h-[calc(100vh-4rem)] w-72 overflow-y-auto border-r border-[var(--border)] pr-5 pb-10 pt-7 lg:block">
+          <div className="space-y-7">
             <DocGroup title="Getting Started">
               <DocLink onClick={() => scrollToSection('intro')} active>Introduction</DocLink>
               <DocLink onClick={() => scrollToSection('anatomy')}>Function Anatomy</DocLink>
@@ -52,205 +51,182 @@ export default function DocsPage() {
             <DocGroup title="Platform Features">
               <DocLink onClick={() => scrollToSection('best-practices')}>Best Practices</DocLink>
               <DocLink onClick={() => scrollToSection('logging')}>Live Logging</DocLink>
-              <DocLink onClick={() => scrollToSection('env-vars')}>Environment Variables</DocLink>
             </DocGroup>
           </div>
         </aside>
 
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="fixed right-6 bottom-6 z-50 rounded-full bg-[#4f59d9] p-3 text-white shadow-[0_18px_40px_rgba(79,89,217,0.18)] transition-colors hover:bg-[#444fd0] lg:hidden"
+          className="fixed right-6 bottom-6 z-50 rounded-full bg-[#3b5bdb] p-3.5 text-white shadow-xl lg:hidden"
+          aria-label="Open documentation navigation"
         >
           <Menu size={24} />
         </button>
 
-        <main className="max-w-5xl flex-1 px-6 py-8 pb-24 lg:pl-72">
+        <main className="max-w-5xl flex-1 px-6 py-10 pb-28 lg:pl-80">
+          {/* Introduction */}
           <section id="intro" className="mb-16">
-            <div className="mb-4 flex items-center gap-2 text-[#9f7b26]">
-              <Book size={20} />
-              <span className="text-sm font-semibold uppercase tracking-[0.24em]">Documentation</span>
+            <div className="mb-3.5 flex items-center gap-2 text-[#3b5bdb] dark:text-[#748ffc]">
+              <Book size={18} />
+              <span className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em]">Documentation</span>
             </div>
-            <h1 className="mb-6 font-[family:var(--font-display)] text-4xl font-semibold tracking-[-0.03em] text-[#221c15]">
+            <h1 className="mb-5 text-3xl font-bold tracking-[-0.03em] text-[var(--foreground)] sm:text-4xl lg:text-5xl">
               Writing Serverless Functions
             </h1>
-            <p className="mb-6 max-w-3xl text-lg leading-8 font-medium text-[#65594b]">
-              ServerlessFlow allows you to deploy code without provisioning servers. Your functions are event-driven, meaning they run only when triggered by an HTTP request, a scheduled cron job, or a database event.
+            <p className="mb-8 text-base sm:text-lg leading-relaxed text-[var(--muted)]">
+              ServerlessFlow allows you to deploy code without provisioning servers. Your functions are event-driven, meaning they execute instantly when triggered by an HTTP request or test run.
             </p>
 
-            <div className="rounded-[1.5rem] border-l-4 border-[#d4a11e] bg-white/70 p-6 shadow-[0_16px_40px_rgba(110,84,29,0.07)]">
-              <h4 className="mb-2 font-[family:var(--font-display)] text-lg font-semibold tracking-[-0.02em] text-[#241d16]">How it works</h4>
-              <ol className="list-decimal list-inside space-y-2 text-[#65594b]">
-                <li>Write your function code in one of our supported languages.</li>
-                <li>We containerize your code automatically.</li>
-                <li>We invoke your container when a request comes in.</li>
-                <li>We scale your function from 0 to 1,000+ instances instantly.</li>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xs">
+              <h4 className="mb-3 text-base sm:text-lg font-semibold text-[var(--foreground)]">How it works</h4>
+              <ol className="list-decimal list-inside space-y-2 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+                <li>Write or edit your function code in our unified web workspace.</li>
+                <li>Save and deploy — automatically creating an OpenWhisk action.</li>
+                <li>Invoke via HTTP endpoint or execute directly via the Test Run button.</li>
+                <li>Monitor response payload, duration, and runtime logs in the output drawer.</li>
               </ol>
             </div>
           </section>
 
+          {/* Anatomy */}
           <section id="anatomy" className="mb-16">
-            <h2 className="mb-6 font-[family:var(--font-display)] text-2xl font-semibold tracking-[-0.02em] text-[#241d16]">Function Anatomy</h2>
-            <p className="mb-6 text-[#65594b] leading-7">
-              Regardless of the language, every function follows the same input/output contract. This strict contract allows us to normalize requests from different sources.
+            <h2 className="mb-3 text-2xl sm:text-3xl font-bold tracking-[-0.02em] text-[var(--foreground)]">
+              Function Anatomy
+            </h2>
+            <p className="mb-6 text-base sm:text-lg leading-relaxed text-[var(--muted)]">
+              Regardless of the language, every function follows a simple input/output contract.
             </p>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-[1.5rem] border border-[#e7e7e0] bg-white p-5 shadow-[0_12px_28px_rgba(20,20,20,0.04)]">
-                <div className="mb-3 flex items-center gap-2 text-[#9f7b26]">
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6 shadow-xs">
+                <div className="mb-3 flex items-center gap-2 text-[#3b5bdb] dark:text-[#748ffc]">
                   <Activity size={18} />
-                  <h3 className="font-[family:var(--font-display)] font-semibold tracking-[-0.02em] text-[#241d16]">Input (Args)</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">Input (args)</h3>
                 </div>
-                <p className="mb-2 text-sm leading-6 text-[#65594b]">
-                  Your function receives a single parameter (usually called <code>args</code>). This contains:
+                <p className="mb-3 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+                  Your function receives a parameter containing:
                 </p>
-                <ul className="ml-1 list-disc list-inside space-y-1 text-sm text-[#7a6d5f]">
+                <ul className="list-disc list-inside space-y-1.5 text-sm sm:text-base text-[var(--muted)]">
                   <li>HTTP Query Parameters</li>
                   <li>HTTP Body (JSON)</li>
                   <li>Path Parameters</li>
                 </ul>
               </div>
 
-              <div className="rounded-[1.5rem] border border-[#e7e7e0] bg-white p-5 shadow-[0_12px_28px_rgba(20,20,20,0.04)]">
-                <div className="mb-3 flex items-center gap-2 text-[#2f7a5a]">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6 shadow-xs">
+                <div className="mb-3 flex items-center gap-2 text-[#2f9e44]">
                   <Zap size={18} />
-                  <h3 className="font-[family:var(--font-display)] font-semibold tracking-[-0.02em] text-[#241d16]">Output (Return)</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">Output (Return)</h3>
                 </div>
-                <p className="mb-2 text-sm leading-6 text-[#65594b]">
-                  You must return a JSON object (or Dictionary).
+                <p className="mb-3 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+                  Return a JSON object or dictionary containing:
                 </p>
-                <ul className="ml-1 list-disc list-inside space-y-1 text-sm text-[#7a6d5f]">
-                  <li><code className="text-[#9f7b26]">body</code>: The actual response data.</li>
-                  <li><code className="text-[#9f7b26]">statusCode</code>: (Optional) HTTP status.</li>
-                  <li><code className="text-[#9f7b26]">headers</code>: (Optional) Custom headers.</li>
+                <ul className="list-disc list-inside space-y-1.5 text-sm sm:text-base text-[var(--muted)]">
+                  <li><code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-sm font-semibold text-[#3b5bdb] dark:text-[#748ffc]">body</code>: The actual response data.</li>
+                  <li><code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-sm font-semibold text-[#3b5bdb] dark:text-[#748ffc]">statusCode</code>: (Optional) HTTP code.</li>
+                  <li><code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-sm font-semibold text-[#3b5bdb] dark:text-[#748ffc]">headers</code>: (Optional) Custom headers.</li>
                 </ul>
               </div>
             </div>
           </section>
 
-          <section id="runtimes" className="mb-16 scroll-mt-24">
-            <h2 className="mb-6 flex items-center gap-2 font-[family:var(--font-display)] text-2xl font-semibold tracking-[-0.02em] text-[#241d16]">
-              <Code className="text-[#9f7b26]" />
+          {/* Runtimes */}
+          <section id="runtimes" className="mb-16 scroll-mt-20">
+            <h2 className="mb-3.5 flex items-center gap-2.5 text-2xl sm:text-3xl font-bold tracking-[-0.02em] text-[var(--foreground)]">
+              <Code size={24} className="text-[#3b5bdb] dark:text-[#748ffc]" />
               Runtime Examples
             </h2>
 
-            <p className="mb-6 text-[#65594b] leading-7">
-              Select your preferred language to see the boilerplate code. This code is ready to deploy immediately.
+            <p className="mb-6 text-base sm:text-lg leading-relaxed text-[var(--muted)]">
+              Select a runtime below to view boilerplate code ready for deployment:
             </p>
 
-            <div className="mb-6 flex gap-6 overflow-x-auto border-b border-[#e4d7be]">
+            <div className="mb-5 flex gap-2.5 border-b border-[var(--border)] pb-3 overflow-x-auto">
               {['nodejs', 'python', 'go', 'swift', 'php'].map((lang) => (
-                <TabButton
+                <button
                   key={lang}
-                  active={activeTab === lang}
                   onClick={() => setActiveTab(lang)}
+                  className={`rounded-lg px-4 py-2 text-sm sm:text-base font-semibold transition ${
+                    activeTab === lang
+                      ? 'bg-[#3b5bdb] text-white shadow-xs'
+                      : 'text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
+                  }`}
                 >
                   {lang === 'nodejs' ? 'Node.js' : lang.charAt(0).toUpperCase() + lang.slice(1)}
-                </TabButton>
+                </button>
               ))}
             </div>
 
-            <div className="group relative overflow-hidden rounded-[1.5rem] border border-[#e7e7e0] bg-white shadow-[0_18px_34px_rgba(20,20,20,0.05)]">
-              <div className="flex items-center justify-between border-b border-[#e8dcc2] bg-[#fbf3e2] px-4 py-3">
+            <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0d1117] shadow-md">
+              <div className="flex items-center justify-between border-b border-[#21262d] bg-[#161b22] px-5 py-3.5">
                 <div className="flex gap-2">
-                  <div className="h-3 w-3 rounded-full border border-[#e8b8af] bg-[#f0c6ba]" />
-                  <div className="h-3 w-3 rounded-full border border-[#ead498] bg-[#f4d36b]" />
-                  <div className="h-3 w-3 rounded-full border border-[#bfd5c4] bg-[#bbdbc4]" />
+                  <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+                  <div className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
+                  <div className="h-3 w-3 rounded-full bg-[#28c840]" />
                 </div>
-                <span className="font-mono text-xs uppercase tracking-widest text-[#8d7b64]">{activeTab} Environment</span>
+                <span className="font-mono text-xs sm:text-sm font-medium uppercase tracking-wider text-[#8b949e]">{activeTab} runtime</span>
               </div>
 
               <CodeContent language={activeTab} />
             </div>
 
-            <div className="mt-6 flex gap-3 rounded-[1.25rem] border border-[#dfe2ff] bg-[#f3f5ff] p-4">
-              <Info className="mt-0.5 shrink-0 text-[#a07110]" size={20} />
+            <div className="mt-5 flex gap-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5 text-sm sm:text-base shadow-xs">
+              <Info className="mt-0.5 shrink-0 text-[#3b5bdb] dark:text-[#748ffc]" size={20} />
               <div>
-                <h4 className="mb-1 text-sm font-semibold text-[#7f6118]">Language Specific Note</h4>
-                <p className="text-sm leading-6 text-[#65594b]">
-                  {activeTab === 'nodejs' && "We run Node.js 18.x LTS. 'require' is supported, but ES Modules (import/export) require setting 'type': 'module' in package.json."}
-                  {activeTab === 'python' && 'Supported version: Python 3.9. External libraries (pip) can be included by uploading a requirements.txt file.'}
-                  {activeTab === 'go' && 'We compile your Go code using Go 1.20. Ensure your function is exported (Capitalized) so our runtime can access it.'}
-                  {activeTab === 'swift' && 'Swift 5.7 runtime. Ideal for high-performance compute tasks where type safety is critical.'}
+                <h4 className="font-semibold text-[var(--foreground)]">Runtime Note</h4>
+                <p className="mt-1 text-[var(--muted)] leading-relaxed">
+                  {activeTab === 'nodejs' && "We run Node.js 18.x LTS. Function handler defaults to main(params)."}
+                  {activeTab === 'python' && 'Supported version: Python 3.11. Function entry point defaults to main(args).'}
+                  {activeTab === 'go' && 'We compile Go code using Go 1.20. Ensure your function is exported (Main) so the runtime can access it.'}
+                  {activeTab === 'swift' && 'Swift 5.7 runtime. Ideal for high-performance compute tasks.'}
                   {activeTab === 'php' && 'PHP 8.2 runtime. Arrays are automatically converted to JSON responses.'}
                 </p>
               </div>
             </div>
           </section>
 
+          {/* Best Practices */}
           <section id="best-practices" className="mb-16">
-            <h2 className="mb-6 flex items-center gap-2 font-[family:var(--font-display)] text-2xl font-semibold tracking-[-0.02em] text-[#241d16]">
-              <Shield className="text-[#2f7a5a]" />
+            <h2 className="mb-4 flex items-center gap-2.5 text-2xl sm:text-3xl font-bold tracking-[-0.02em] text-[var(--foreground)]">
+              <Shield size={24} className="text-[#2f9e44]" />
               Best Practices
             </h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              <InfoCard title="Statelessness">
-                Functions should be stateless. Do not rely on local variables persisting between requests. Use a database (like Redis or MongoDB) for state.
-              </InfoCard>
-              <InfoCard title="Execution Time">
-                Keep functions fast. The default timeout is 60 seconds. Long-running tasks should be offloaded to a background worker or queue.
-              </InfoCard>
-              <InfoCard title="Error Handling">
-                Always return standard HTTP status codes in your response body or error object to trigger retries properly.
-              </InfoCard>
-              <InfoCard title="Dependencies">
-                Keep your deployment package small. Remove devDependencies before deploying to ensure faster cold starts.
-              </InfoCard>
-            </div>
-          </section>
-
-          <section id="logging" className="mb-16">
-            <h2 className="mb-6 flex items-center gap-2 font-[family:var(--font-display)] text-2xl font-semibold tracking-[-0.02em] text-[#241d16]">
-              <Activity className="text-[#9f7b26]" />
-              Logging & Monitoring
-            </h2>
-            <p className="mb-6 text-[#65594b] leading-7">
-              ServerlessFlow automatically captures standard output (stdout) and standard error (stderr) streams. You do not need a third-party logging library.
-            </p>
-
-            <div className="rounded-[1.5rem] border border-[#e7e7e0] bg-white p-6 shadow-[0_12px_28px_rgba(20,20,20,0.04)]">
-              <h3 className="mb-4 font-[family:var(--font-display)] text-xl font-semibold tracking-[-0.02em] text-[#241d16]">How to view logs</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded bg-[#fff4cf] p-1.5 text-[#a07110]"><Terminal size={16} /></div>
-                  <div>
-                    <strong className="text-[#2d241c]">Dashboard Stream:</strong>
-                    <p className="text-sm leading-6 text-[#65594b]">Navigate to your function details page. The &quot;Real-time Logs&quot; tab shows a live websocket connection to your running container.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded bg-[#fff4cf] p-1.5 text-[#a07110]"><Code size={16} /></div>
-                  <div>
-                    <strong className="text-[#2d241c]">Structured Logging:</strong>
-                    <p className="text-sm leading-6 text-[#65594b]">If you print a JSON string (e.g. <code className="rounded bg-[#f7f0df] px-1 text-xs text-[#7f6118]">console.log(JSON.stringify(obj))</code>), our dashboard will automatically parse and format it for easier reading.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          <section id="env-vars" className="mb-16">
-            <h2 className="mb-6 font-[family:var(--font-display)] text-2xl font-semibold tracking-[-0.02em] text-[#241d16]">Environment Variables</h2>
-            <div className="flex items-start gap-4 rounded-[1.25rem] border border-[#efcf95] bg-[#fff1c7] p-4">
-              <AlertTriangle className="mt-1 shrink-0 text-[#b77908]" size={20} />
-              <div>
-                <h4 className="text-sm font-semibold text-[#7f6118]">Security Warning</h4>
-                <p className="mt-1 text-sm leading-6 text-[#65594b]">
-                  Never hardcode API keys or database passwords in your function code. Use the &quot;Settings&quot; tab in your dashboard to add encrypted environment variables.
-                </p>
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6 shadow-xs">
+                <h4 className="mb-2 text-base sm:text-lg font-semibold text-[var(--foreground)]">Stateless Execution</h4>
+                <p className="text-sm sm:text-base leading-relaxed text-[var(--muted)]">Functions should be stateless. Do not rely on in-memory variables persisting between requests.</p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6 shadow-xs">
+                <h4 className="mb-2 text-base sm:text-lg font-semibold text-[var(--foreground)]">Fast Execution</h4>
+                <p className="text-sm sm:text-base leading-relaxed text-[var(--muted)]">Keep handlers lean to minimize latency. Offload heavy background work to async queues.</p>
               </div>
             </div>
+          </section>
+
+          {/* Logging */}
+          <section id="logging" className="mb-16">
+            <h2 className="mb-4 flex items-center gap-2.5 text-2xl sm:text-3xl font-bold tracking-[-0.02em] text-[var(--foreground)]">
+              <Activity size={24} className="text-[#3b5bdb] dark:text-[#748ffc]" />
+              Logging & Monitoring
+            </h2>
+            <p className="text-base sm:text-lg leading-relaxed text-[var(--muted)]">
+              ServerlessFlow automatically captures stdout and stderr output. Everything printed via <code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-sm sm:text-base font-mono">console.log()</code> or <code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-sm sm:text-base font-mono">print()</code> appears directly in your execution output drawer.
+            </p>
           </section>
         </main>
       </div>
 
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[rgba(251,246,234,0.96)] p-8 backdrop-blur-sm">
-          <button onClick={() => setMobileMenuOpen(false)} className="mb-8 self-end text-[#65594b] hover:text-[#221c15]"><X size={32} /></button>
-          <nav className="flex flex-col gap-6 text-xl font-medium text-[#221c15]">
-            <button onClick={() => scrollToSection('intro')} className="text-left">Introduction</button>
-            <button onClick={() => scrollToSection('runtimes')} className="text-left">Runtimes</button>
-            <button onClick={() => scrollToSection('best-practices')} className="text-left">Best Practices</button>
-            <button onClick={() => scrollToSection('logging')} className="text-left">Logging</button>
+        <div className="fixed inset-0 z-50 flex flex-col bg-[var(--surface)] p-7 backdrop-blur-md lg:hidden">
+          <button onClick={() => setMobileMenuOpen(false)} className="mb-6 self-end text-[var(--muted)] hover:text-[var(--foreground)]" aria-label="Close menu">
+            <X size={26} />
+          </button>
+          <nav className="flex flex-col gap-4 text-lg font-medium text-[var(--foreground)]">
+            <button onClick={() => scrollToSection('intro')} className="text-left py-1.5">Introduction</button>
+            <button onClick={() => scrollToSection('anatomy')} className="text-left py-1.5">Function Anatomy</button>
+            <button onClick={() => scrollToSection('runtimes')} className="text-left py-1.5">Runtimes</button>
+            <button onClick={() => scrollToSection('best-practices')} className="text-left py-1.5">Best Practices</button>
+            <button onClick={() => scrollToSection('logging')} className="text-left py-1.5">Live Logging</button>
           </nav>
         </div>
       )}
@@ -261,7 +237,7 @@ export default function DocsPage() {
 function DocGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-3 pl-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#8b7d6e]">{title}</h3>
+      <h3 className="mb-2.5 pl-3 text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[var(--muted-2)]">{title}</h3>
       <div className="flex flex-col space-y-1">{children}</div>
     </div>
   );
@@ -271,30 +247,14 @@ function DocLink({ children, active, onClick }: { children: React.ReactNode; act
   return (
     <button
       onClick={onClick}
-      className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${active ? 'bg-[#fff1c7] text-[#7f6118]' : 'text-[#65594b] hover:bg-white/80 hover:text-[#221c15]'}`}
+      className={`rounded-xl px-3.5 py-2.5 text-left text-sm sm:text-[15px] font-medium transition-colors ${
+        active 
+          ? 'bg-[var(--surface-2)] text-[var(--foreground)] font-semibold shadow-xs' 
+          : 'text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
+      }`}
     >
       {children}
     </button>
-  );
-}
-
-function TabButton({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`border-b-2 px-1 pb-3 text-sm font-medium whitespace-nowrap transition-colors ${active ? 'border-[#d4a11e] text-[#221c15]' : 'border-transparent text-[#8b7d6e] hover:text-[#4d4235]'}`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-[1.5rem] border border-[#e7e7e0] bg-white p-5 shadow-[0_12px_28px_rgba(20,20,20,0.04)] transition-colors hover:border-[#dbc9ab]">
-      <h4 className="mb-2 font-[family:var(--font-display)] font-semibold tracking-[-0.02em] text-[#241d16]">{title}</h4>
-      <p className="text-sm leading-6 text-[#65594b]">{children}</p>
-    </div>
   );
 }
 
@@ -302,69 +262,47 @@ function CodeContent({ language }: { language: string }) {
   const [copied, setCopied] = useState(false);
 
   const codes: Record<string, string> = {
-    nodejs: `function main(args) {
-    // 1. Parse Input
-    let name = args.name || 'stranger';
+    nodejs: `function main(params) {
+  // 1. Parse Input
+  const name = params.name || 'stranger';
 
-    // 2. Do Logic
-    let greeting = 'Hello ' + name + '!';
-    console.log("Processing request for: " + name);
+  // 2. Logic & Logging
+  console.log('Processing request for:', name);
 
-    // 3. Return JSON
-    return { "body": greeting };
+  // 3. Return JSON
+  return { body: 'Hello ' + name + '!' };
 }`,
     python: `def main(args):
     # 1. Parse Input
     name = args.get("name", "stranger")
 
-    # 2. Do Logic
-    greeting = "Hello " + name + "!"
+    # 2. Logic & Logging
     print(f"Processing request for: {name}")
 
     # 3. Return Dict
-    return {"body": greeting}`,
+    return {"body": f"Hello {name}!"}`,
     swift: `func main(args: [String:Any]) -> [String:Any] {
-    // 1. Parse Input safely
-    if let name = args["name"] as? String {
-        let greeting = "Hello \\(name)!"
-        print("Log: Processing for \\(name)")
-        return [ "body" : greeting ]
-    } else {
-        return [ "body" : "Hello stranger!" ]
-    }
+    let name = args["name"] as? String ?? "stranger"
+    print("Processing for: \\(name)")
+    return [ "body" : "Hello \\(name)!" ]
 }`,
     go: `package main
 
 import "fmt"
 
-// Exported function (Capitalized)
 func Main(args map[string]interface{}) map[string]interface{} {
-    // 1. Type Assertion
     name, ok := args["name"].(string)
     if !ok {
         name = "stranger"
     }
-
-    // 2. Logic
-    fmt.Println("Log: Processing request...")
-
-    // 3. Return Map
-    msg := make(map[string]interface{})
-    msg["body"] = "Hello, " + name + "!"
-    return msg
+    fmt.Println("Processing request for:", name)
+    return map[string]interface{}{"body": "Hello, " + name + "!"}
 }`,
     php: `<?php
 function main(array $args) : array {
-    // 1. Null Coalescing for default
     $name = $args["name"] ?? "stranger";
-
-    // 2. Logic
-    $greeting = "Hello $name!";
-
-    // 3. Stdout is captured as logs
-    echo "Log: Processing for $name";
-
-    return ["body" => $greeting];
+    echo "Processing for $name";
+    return ["body" => "Hello $name!"];
 }`,
   };
 
@@ -378,13 +316,13 @@ function main(array $args) : array {
     <div className="relative">
       <button
         onClick={handleCopy}
-        className="absolute top-4 right-4 z-10 rounded-md border border-[#e7e7e0] bg-white p-2 text-[#6c6c66] transition-all hover:bg-[#f3f5ff] hover:text-[#171717]"
+        className="absolute top-3.5 right-3.5 z-10 rounded-lg border border-[#30363d] bg-[#21262d] p-2 text-[#8b949e] hover:text-white transition-colors"
         title="Copy code"
       >
-        {copied ? <Check size={16} className="text-[#2f7a5a]" /> : <Copy size={16} />}
+        {copied ? <Check size={16} className="text-[#3fb950]" /> : <Copy size={16} />}
       </button>
 
-      <pre className="overflow-x-auto bg-[#fffdfa] p-6 font-mono text-sm leading-relaxed text-[#43382d]">
+      <pre className="overflow-x-auto p-6 font-mono text-sm sm:text-[15px] leading-7 text-[#c9d1d9]">
         <code>{codes[language]}</code>
       </pre>
     </div>

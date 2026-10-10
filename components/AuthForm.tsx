@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Lock, User, LogIn, UserPlus, Shield } from 'lucide-react';
+import { Mail, Lock, User, LogIn, UserPlus, Shield, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
@@ -63,23 +63,27 @@ export function AuthForm({ type }: AuthFormProps) {
   const Icon = isLogin ? LogIn : UserPlus;
 
   return (
-    <div className="w-full max-w-md rounded-[2rem] border border-[#e7e6df] bg-white p-8 shadow-[0_24px_60px_rgba(20,20,20,0.08)] sm:p-10">
-      <div className="mb-8 flex justify-center">
-        <Link href="/" className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff5a1f] text-white shadow-[0_14px_28px_rgba(255,90,31,0.22)] transition-transform hover:-translate-y-0.5">
-          <Shield size={22} fill="currentColor" />
+    <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-xl sm:p-10 transition-colors">
+      <div className="mb-6 flex justify-center">
+        <Link href="/" className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--foreground)] text-[var(--background)] shadow-sm transition-opacity hover:opacity-90">
+          <Shield size={20} fill="currentColor" />
         </Link>
       </div>
 
-      <h2 className="text-center text-3xl font-semibold tracking-[-0.04em] text-[#181817]">{title}</h2>
-      <p className="mt-3 text-center text-sm leading-7 text-[#66665f]">{subtitle}</p>
+      <h2 className="text-center text-2xl font-semibold tracking-[-0.03em] text-[var(--foreground)]">{title}</h2>
+      <p className="mt-2 text-center text-xs leading-5 text-[var(--muted)]">{subtitle}</p>
 
       {message && (
-        <div className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${message.type === 'success' ? 'border-[#cdecd9] bg-[#eef8f1] text-[#2e8a57]' : 'border-[#f1d0cb] bg-[#fff2f0] text-[#bf4b3d]'}`}>
+        <div className={`mt-5 rounded-xl border px-4 py-2.5 text-xs font-medium ${
+          message.type === 'success' 
+            ? 'border-[#2f9e44]/30 bg-[#ebfbee] dark:bg-[#132b1b] text-[#2f9e44] dark:text-[#40c057]' 
+            : 'border-[#e03131]/30 bg-[#fff5f5] dark:bg-[#341717] text-[#e03131] dark:text-[#fa5252]'
+        }`}>
           {message.text}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         {!isLogin && (
           <InputField
             Icon={User}
@@ -112,22 +116,22 @@ export function AuthForm({ type }: AuthFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-[#4f59d9] py-3.5 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(79,89,217,0.18)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#3b5bdb] py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-[#3451c7] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <Loader2 className="animate-spin" size={16} />
           ) : (
             <>
-              <Icon size={18} />
+              <Icon size={16} />
               {buttonText}
             </>
           )}
         </button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-[#6a6a63]">
+      <div className="mt-6 text-center text-xs text-[var(--muted)]">
         {isLogin ? "Don't have an account? " : 'Already have an account? '}
-        <Link href={isLogin ? '/signup' : '/login'} className="font-semibold text-[#3d49d8] hover:text-[#2f3dc9]">
+        <Link href={isLogin ? '/signup' : '/login'} className="font-semibold text-[#3b5bdb] dark:text-[#748ffc] hover:underline">
           {isLogin ? 'Sign Up' : 'Log In'}
         </Link>
       </div>
@@ -152,14 +156,14 @@ function InputField({
 }) {
   return (
     <div className="relative">
-      <Icon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a8a83]" />
+      <Icon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-2)]" />
       <input
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full rounded-2xl border border-[#e2e1da] bg-[#fbfbf8] py-3.5 pl-12 pr-4 text-[#181817] placeholder:text-[#8c8c85] focus:border-[#4f59d9] focus:outline-none focus:ring-2 focus:ring-[#d9dcff]"
+        className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] py-2.5 pl-10 pr-3.5 text-xs text-[var(--foreground)] placeholder:text-[var(--muted-2)] outline-none focus:border-[#3b5bdb] focus:ring-2 focus:ring-[#3b5bdb]/10 transition-colors"
       />
     </div>
   );

@@ -26,11 +26,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Check for logged-in user on page load
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const storedUser = localStorage.getItem('authUser');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+    const storedUser = typeof window !== 'undefined' ? localStorage.getItem('authUser') : null;
     
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUser(JSON.parse(storedUser));
+      } catch {
+        // ignore parse error
+      }
     }
     setIsLoading(false);
   }, []);
